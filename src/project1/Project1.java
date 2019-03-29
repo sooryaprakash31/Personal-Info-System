@@ -1,10 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
+
 package project1;
 
+import java.awt.event.ActionEvent;
+import java.beans.EventHandler;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -20,10 +25,24 @@ import javafx.scene.layout.VBox;
  *
  * @author Soorya Prakash
  */
+
+//Personal information system to store the details of the employees
 public class Project1 extends Application {
+    
+    //Database Connection
+    //DBname:Employee
+    public final Connection connection;
+    public final Statement st;
+    public Project1() throws ClassNotFoundException, SQLException {
+        Class.forName("com.mysql.jdbc.Driver");
+        connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/employee","root","");
+        st = connection.createStatement();
+    }
     
     @Override
     public void start(Stage primaryStage) {
+        
+        //UI components
         Text name1 = new Text("Name :");
         Text age1 = new Text("Age :");
         Text id1 = new Text("ID :");
@@ -51,8 +70,6 @@ public class Project1 extends Application {
         Button ok = new Button();
         Button cancel = new Button();
         
-     //   StackPane root = new StackPane();
-      //  root.getChildren().add(btn);
         VBox vb = new VBox();
         vb.setPadding(new Insets(20, 50, 50, 50));
         vb.setSpacing(60);
@@ -100,13 +117,49 @@ public class Project1 extends Application {
         primaryStage.setTitle("Personal Information System");
         primaryStage.setScene(scene);
         primaryStage.show();
+        
+         //Stores all the input data to DB
+         ok.setOnAction((javafx.event.ActionEvent event) -> {
+             
+             String name2,gender2,addr2,email2;
+             int salary2,experience2,id2,age2;
+             String dob2,dept2,phone2;
+             String sql;
+             name2 = name.getText();
+             gender2 = gender.getText();
+             addr2 = addr.getText();
+             salary2 = Integer.parseInt(salary.getText());
+             experience2 = Integer.parseInt(experience.getText());
+             email2 = email.getText();
+             id2 = Integer.parseInt(id.getText());
+             age2 = Integer.parseInt(age.getText());
+             dob2 = dob.getText();
+             dept2 = dept.getText();
+             phone2 = phone.getText();
+            
+             //SQL query statement
+             sql = "INSERT INTO INFORMATION " + "VALUES ('" + name2 + "','" + id2 + "','" + dob2 + "','" + age2 + "','" + gender2 + "','" + dept2 + "','" + addr2 + "','" + phone2 + "','" + email2 + "','" + salary2 + "','" + experience2 + "');";
+             try {
+                 st.executeUpdate(sql);
+             } catch (SQLException ex) {
+                 Logger.getLogger(Project1.class.getName()).log(Level.SEVERE, null, ex);
+             }
+        });
+        
+         //closes the application
+        cancel.setOnAction((javafx.event.ActionEvent event) -> {
+           
+            primaryStage.close();
+        });
+        
     }
 
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         launch(args);
     }
-    
-}
+
+ }
